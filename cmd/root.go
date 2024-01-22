@@ -12,13 +12,12 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-
 	//"path"
-	"github.com/spf13/cobra"
+	//"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{}
+//var rootCmd = &cobra.Command{}
 
 func Execute() {
 	args := os.Args
@@ -353,7 +352,7 @@ func Execute() {
 			os.Exit(1)
 		}
 	}
-	///home/pabadhi/myGoProjects/sample2/app/build/libs/app.jar
+	//         /home/pabadhi/myGoProjects/sample2/app/build/libs/app.jar
 
 }
 
