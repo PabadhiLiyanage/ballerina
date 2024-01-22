@@ -27,7 +27,9 @@ func Execute() {
 		fmt.Printf("%d: %s\n", i+1, arg)
 	}
 	ballerinaHome := "/path/to/ballerina/home"
-	javaPath := filepath.Join(ballerinaHome, "../../dependencies/jdk-17.0.7+7-jre")
+	//javaPath := filepath.Join(ballerinaHome, "../../dependencies/jdk-17.0.7+7-jre")
+	javaPath := filepath.Join(ballerinaHome, "..", "..", "dependencies", "jdk-17.0.7+7-jre")
+
 	if stat, err := os.Stat(javaPath); err == nil && stat.IsDir() {
 		javaHome := javaPath
 		// Set JAVA_HOME environment variable
