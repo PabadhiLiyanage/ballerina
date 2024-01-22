@@ -12,7 +12,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	//"path"
 	//"github.com/spf13/cobra"
 )
 
