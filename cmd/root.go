@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -119,7 +116,7 @@ func Execute() {
 	javaCmd := os.Getenv("JAVACMD")
 	javaHome := os.Getenv("JAVA_HOME")
 	//fmt.Println("JavaCmD= ", javaCmd)
-	fmt.Println("-----------------------------")
+
 	if javaCmd == "" {
 		if javaHome != "" {
 			// If JAVA_HOME is set, determine the appropriate JAVACMD
@@ -173,26 +170,33 @@ func Execute() {
 	//Setting Ballerina debug port
 
 	balJavaDebug := os.Getenv("BAL_JAVA_DEBUG")
+	javaOpts := ""
 	if balJavaDebug != "" {
-		// BAL_JAVA_DEBUG is set, proceed
-		if os.Getenv("JAVA_OPTS") != "" {
-			fmt.Println("Warning !!!. User specified JAVA_OPTS may interfere with BAL_JAVA_DEBUG")
-		}
+		fmt.Println("BAL_JAVA_DEBUG is set")
 
-		// Check if BAL_DEBUG_OPTS is set
-		balDebugOpts := os.Getenv("BAL_DEBUG_OPTS")
-		if balDebugOpts != "" {
-			// If BAL_DEBUG_OPTS is set, use it
-			os.Setenv("JAVA_OPTS", os.Getenv("JAVA_OPTS")+" "+balDebugOpts)
+		if balJavaDebug == "" {
+			fmt.Println("Please specify the debug port for the BAL_JAVA_DEBUG variable")
+			os.Exit(1)
 		} else {
-			// If BAL_DEBUG_OPTS is not set, set default debug options
-			os.Setenv("JAVA_OPTS", os.Getenv("JAVA_OPTS")+
-				" -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address="+balJavaDebug)
+			javaOpts = os.Getenv("JAVA_OPTS")
+
+			if javaOpts != "" {
+				fmt.Println("Warning !!! User specified JAVA_OPTS may interfere with BAL_JAVA_DEBUG")
+			}
+
+			balDebugOpts := os.Getenv("BAL_DEBUG_OPTS")
+
+			if balDebugOpts != "" {
+				javaOpts = javaOpts + " " + balDebugOpts
+			} else {
+				javaOpts = javaOpts + " -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + balJavaDebug
+			}
+
+			fmt.Println("Java Options:", javaOpts)
 		}
 	} else {
-		fmt.Println("BAL_JAVA_DEBUG is not set.")
+		fmt.Println("BAL_JAVA_DEBUG is not set")
 	}
-
 	//Ballerina jarpath setting
 	//ballerinaHome = "/usr/lib/ballerina/distributions/ballerina-2201.8.4"
 	jarPath := filepath.Join(ballerinaHome, "bre", "lib")
@@ -269,8 +273,12 @@ func Execute() {
 		"-Djava.command=" + javaCmd,
 	}
 	fmt.Println("length", len(os.Args))
+	if javaOpts != "" {
+		JAVA_OPTS := strings.Fields(javaOpts)
+		cmdLineArgs = append(cmdLineArgs, JAVA_OPTS...)
+	}
 	//Implementation of bal run <*.jar>
-	if os.Args[1] == "run" && isJarFile(os.Args[2]) {
+	if len(os.Args) >= 3 && os.Args[1] == "run" && isJarFile(os.Args[2]) {
 		//jarFilePath := os.Args[2]
 		cmdArgs := append(cmdLineArgs, "-jar")
 		cmdArgs = append(cmdArgs, os.Args[2:]...)
@@ -307,7 +315,7 @@ func Execute() {
 
 			err := cmd.Run()
 			if err != nil {
-				fmt.Println("Error running Java command:", err)
+				fmt.Println("Error running else if 1 command:", err)
 				os.Exit(1)
 			}
 		}
@@ -329,7 +337,7 @@ func Execute() {
 
 			err := cmd.Run()
 			if err != nil {
-				fmt.Println("Error running Java command:", err)
+				fmt.Println("Error running else if 2 command:", err)
 				os.Exit(1)
 			}
 		} else {
@@ -349,7 +357,7 @@ func Execute() {
 		// Run the command
 
 		if err != nil {
-			fmt.Println("Error running Java command:", err)
+			fmt.Println("Error running else command:", err)
 			os.Exit(1)
 		}
 	}
